@@ -1,7 +1,7 @@
 /* ===== কৃষি সাথী: AI ফাংশন (ছবি শনাক্ত + প্রশ্ন-উত্তর) =====
    API key কোডে নয়। Netlify > Site configuration > Environment variables-এ
    GEMINI_API_KEY নামে বসান। চাইলে GEMINI_MODEL নামে মডেলও বদলাতে পারবেন। */
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 const DIAG_PROMPT = `তুমি বাংলাদেশের অভিজ্ঞ কৃষি রোগতত্ত্ববিদ ও কীটতত্ত্ববিদ। ছবির ফসল, রোগ বা পোকা শনাক্ত করো।
 শুধু একটি JSON অবজেক্ট দাও, অন্য কিছু নয়। সব লেখা সহজ বাংলায়, কৃষক যেন বুঝতে পারেন:
