@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B7F4B">
+<title>কৃষি সাথী</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===================== ভাগ ১: রং ও স্টাইল (এখানে ডিজাইন বদলান) ===================== */
+:root{--g:#1B7F4B;--gd:#0F5C34;--mint:#EAF6EF;--sun:#F2A900;--amb:#FFF4D6;--ambt:#7A5200;--red:#C62828;--redbg:#FDECEA;--ink:#14231A;--mute:#5F6F65;--line:#E3E9E4;--w:#fff;color-scheme:light}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Hind Siliguri',system-ui,sans-serif;background:#F1F4F1;color:var(--ink);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);display:flex;justify-content:center}
+#app{width:100%;max-width:460px;height:100%;position:relative;overflow:hidden;background:var(--w);box-shadow:0 0 30px rgba(0,0,0,.08)}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--w)}
+.screen.on{display:flex;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen.on{animation:none}.spin{animation:none!important}}
+.scroll{flex:1;overflow-y:auto;padding:18px 18px 28px}
+button,label.btn{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+h1{font-size:25px;line-height:1.35;font-weight:700}
+h2{font-size:18px;font-weight:600;margin:24px 0 10px}
+.sub{color:var(--mute);margin-top:6px;font-size:15px;line-height:1.6}
+.btn{display:block;width:100%;background:var(--g);color:#fff;font-weight:600;font-size:17px;padding:14px;border-radius:14px;text-align:center;position:relative;box-shadow:0 2px 6px rgba(27,127,75,.25)}
+.btn:disabled{background:var(--line);color:var(--mute);box-shadow:none}
+.btn.o{background:var(--w);color:var(--g);border:2px solid var(--g);box-shadow:none}
+.btn.t{background:none;color:var(--g);font-size:15px;padding:10px;box-shadow:none}
+.foot{padding:12px 18px 14px;border-top:1px solid var(--line)}
+.card{background:var(--w);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px;box-shadow:0 1px 3px rgba(20,35,26,.06)}
+.card h4{font-size:16px;margin-bottom:6px}.card li{margin:4px 0 4px 18px;font-size:15px;line-height:1.55}
+.note{background:var(--amb);color:var(--ambt);border-radius:12px;padding:11px 13px;font-size:13.5px;line-height:1.55;margin-top:12px}
+.why{background:var(--mint);border-radius:12px;padding:11px 13px;font-size:14px;line-height:1.55;margin:14px 0 4px}
+.tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:10px;font-weight:600;background:var(--mint);color:var(--gd)}
+.tag.r{background:var(--redbg);color:var(--red)}.tag.y{background:var(--amb);color:var(--ambt)}
+label.f{display:block;font-weight:600;margin:16px 0 6px;font-size:15px}
+select,input[type=number],input[type=date],input[type=search],textarea{width:100%;font:inherit;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--w);color:var(--ink)}
+.logo{width:84px;height:84px;border-radius:26px;background:linear-gradient(135deg,var(--g),var(--gd));display:grid;place-items:center;font-size:44px;margin-bottom:20px;box-shadow:0 6px 16px rgba(27,127,75,.3)}
+/* অনবোর্ডিং */
+.bar{display:flex;gap:6px;margin-bottom:20px}.bar i{flex:1;height:5px;border-radius:3px;background:var(--line)}.bar i.d{background:var(--g)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.pick{border:2px solid var(--line);border-radius:16px;padding:12px 4px;text-align:center;font-size:15px;background:var(--w);position:relative}
+.pick b{display:block;font-size:32px;font-weight:400}.pick.sel{border-color:var(--g);background:var(--mint)}
+.pick.sel::after{content:"✓";position:absolute;top:5px;right:8px;color:var(--g);font-weight:700}
+.opt{display:flex;gap:14px;align-items:center;border:2px solid var(--line);border-radius:16px;padding:13px;text-align:left;width:100%;margin-top:10px}
+.opt b{font-size:28px;font-weight:400}.opt span{font-weight:600;display:block}.opt small{color:var(--mute);font-size:13px}.opt.sel{border-color:var(--g);background:var(--mint)}
+/* হোম */
+.top{background:linear-gradient(180deg,#D3EFDD 0%,#fff 100%);padding-bottom:6px}
+.hb{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 2px}.hb b{font-size:22px;color:var(--gd)}
+.chips{display:flex;gap:12px;overflow-x:auto;padding:8px 18px 10px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;text-align:center;font-size:13px;width:62px}
+.chip i{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;border:2px solid var(--line);background:#fff;font-size:28px;font-style:normal;margin:0 auto 3px;box-shadow:0 1px 4px rgba(20,35,26,.1)}
+.chip.mine i{border-color:var(--g)}
+.cards2{display:flex;gap:10px;overflow-x:auto;padding:4px 18px 6px;scrollbar-width:none}
+.mini{flex:none;background:#fff;border-radius:16px;padding:11px 14px;min-width:150px;box-shadow:0 1px 5px rgba(20,35,26,.12)}.mini small{display:block;color:var(--mute);font-size:12.5px}.mini b{font-size:18px}
+.scanc{margin:12px 18px 0;background:#fff;border-radius:20px;padding:16px;box-shadow:0 2px 10px rgba(20,35,26,.12);border:1px solid var(--line)}
+.stp{display:flex;align-items:flex-start;text-align:center;font-size:12.5px;color:var(--mute);margin-bottom:14px}.stp div{flex:1}.stp b{display:block;font-size:34px;font-weight:400}.stp i{font-style:normal;font-size:24px;align-self:center}
+.sea{margin:12px 18px 0;background:var(--mint);border-radius:16px;padding:13px 14px;display:flex;gap:12px;font-size:14.5px;line-height:1.55}.sea b.i{font-size:28px;font-weight:400}
+.now{display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.nowc{flex:none;width:128px;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:left;background:#fff;box-shadow:0 1px 3px rgba(20,35,26,.08)}.nowc b{font-size:28px;font-weight:400;display:block}.nowc small{color:var(--mute);font-size:12px;display:block;line-height:1.4}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left;box-shadow:0 1px 3px rgba(20,35,26,.06);font-weight:600;font-size:15px;line-height:1.4;background:#fff}
+.tile b{display:block;font-size:28px;font-weight:400;margin-bottom:4px}.tile small{display:block;font-weight:400;color:var(--mute);font-size:12.5px}
+.tile em{position:absolute;top:8px;right:8px;font-style:normal;background:#FFE08A;color:#5a4100;font-size:11px;padding:1px 8px;border-radius:9px;font-weight:600}
+.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 14px;border:1px solid var(--line);border-radius:14px;margin-top:10px;background:#fff}
+.row b.i{font-size:28px;font-weight:400}.row div{flex:1;line-height:1.4}.row small{color:var(--mute);display:block;font-size:13px}
+.cp{background:linear-gradient(135deg,var(--g),var(--gd));color:#fff;border-radius:20px;padding:18px;display:flex;gap:14px;align-items:center}.cp b{font-size:46px;font-weight:400}.cp h1{font-size:24px}.cp small{opacity:.9}
+/* নেভিগেশন */
+.nav{display:flex;border-top:1px solid var(--line);background:var(--w)}
+.nav button{flex:1;padding:7px 0 9px;font-size:12px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav button span{font-size:20px;padding:2px 16px;border-radius:14px}.nav button.on{color:var(--gd);font-weight:600}.nav button.on span{background:var(--mint)}
+.bk{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:600;font-size:17px}.bk button{font-size:22px;padding:2px 10px}
+/* ফলাফল, সময়রেখা */
+.prev{width:100%;max-height:230px;object-fit:cover;border-radius:16px;margin-top:12px}
+.meter{height:9px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;background:var(--g)}
+.spin{width:44px;height:44px;border:5px solid var(--line);border-top-color:var(--g);border-radius:50%;animation:sp 1s linear infinite;margin:40px auto 14px}@keyframes sp{to{transform:rotate(360deg)}}
+.mc{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}.mc b{display:block;font-size:16px}.mc small{color:var(--mute)}
+.out{white-space:pre-wrap;line-height:1.7;font-size:15px}
+.res{background:var(--mint);border-radius:14px;padding:14px;margin-top:14px;font-size:16px;line-height:1.7}
+.tl{border-left:3px solid var(--g);margin:12px 0 0 8px;padding:0 0 4px 14px;position:relative;font-size:15px;line-height:1.55}
+.tl::before{content:"";position:absolute;left:-9px;top:3px;width:15px;height:15px;border-radius:50%;background:var(--g);border:3px solid #fff}
+.tl b{display:block}.tl small{color:var(--mute);display:block}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.seg button{border:2px solid var(--line);border-radius:20px;padding:6px 14px;font-size:14.5px;background:#fff}.seg button.on{border-color:var(--g);background:var(--mint);font-weight:600}
+.tb{width:100%;border-collapse:collapse;font-size:14.5px}.tb td{padding:7px 4px;border-bottom:1px solid var(--line)}.tb td:last-child{text-align:right;font-weight:600}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ===================== ভাগ ২: স্ক্রিনের কাঠামো ===================== -->
+<section class="screen on" id="s-ob1"><div class="scroll"><div class="bar"><i class="d"></i><i></i></div>
+  <div class="logo" aria-hidden="true">🌱</div><h1>কৃষি সাথী</h1>
+  <p class="sub">ফসলের রোগ চিনুন, সার ও চাষের সময় জানুন, সবই বাংলায়। লগইন লাগবে না।</p>
+  <h2>আপনি কোন কোন ফসল চাষ করেন?</h2>
+  <div class="why">💡 এতে আমরা আপনার ফসলের রোগ, পোকা ও সারের পরামর্শ আগে দেখাব। একাধিক বেছে নিন, পরে বদলানো যাবে।</div>
+  <div class="grid3" id="cg"></div></div>
+  <div class="foot"><button class="btn" id="cn" disabled onclick="show('s-ob2');autoLoc()">পরের ধাপ</button></div></section>
+
+<section class="screen" id="s-ob2"><div class="scroll"><div class="bar"><i class="d"></i><i class="d"></i></div>
+  <h1>কোথায় চাষ করেন?</h1>
+  <div class="why">💡 জায়গা অনুযায়ী পরামর্শ আলাদা: মাঠে এক রকম, ছাদে বা টবে অন্য রকম। জেলা জানলে এলাকা ও মৌসুম অনুযায়ী পরামর্শ দিতে পারব।</div>
+  <button class="btn o" style="margin-top:14px" onclick="autoLoc()">📍 আমার অবস্থান নিন</button><div class="sub" id="locst" aria-live="polite"></div><div id="sg"></div><label class="f" for="dv">বিভাগ</label><select id="dv"></select><label class="f" for="ds">জেলা</label><select id="ds"></select></div>
+  <div class="foot"><button class="btn" id="wn" disabled onclick="finish()">অ্যাপ শুরু করুন</button><button class="btn t" onclick="show('s-ob1')">পেছনে যান</button></div></section>
+
+<section class="screen" id="s-home"><div class="scroll" style="padding:0 0 24px">
+  <div class="top"><div class="hb"><b>কৃষি সাথী</b><button class="tag" id="loc" onclick="reLoc()" aria-label="অবস্থান আপডেট করুন"></button></div><div class="chips" id="hc"></div>
+  <div class="cards2"><div class="mini"><small id="dt2"></small><b id="ssn"></b></div><div class="mini"><small>স্প্রের সেরা সময়</small><b style="color:var(--g)">সকাল ১০টার আগে</b></div><div class="mini"><small>বিকেলে</small><b style="color:var(--g)">৪টার পর</b></div></div></div>
+  <div class="scanc"><div class="stp"><div><b>📱</b>একটা ছবি তুলুন</div><i>›</i><div><b>🔍</b>লক্ষণ দেখে রোগ চিনুন</div><i>›</i><div><b>🧴</b>দমনব্যবস্থা পান</div></div><button class="btn" onclick="openScan()">📷 একটা ছবি তুলুন</button></div>
+  <div class="sea" id="sea"></div>
+  <div style="padding:0 18px"><h2>এই মাসে কী লাগাবেন</h2><div class="now" id="now"></div>
+  <h2>টুলস</h2><div class="tiles">
+    <button class="tile" onclick="calendar()"><b>🗓️</b>চাষের ক্যালেন্ডার<small>কখন বপন, কত দিনে ফসল</small></button>
+    <button class="tile" onclick="fert()"><b>🧪</b>সারের ক্যালকুলেটর<small>কত কেজি, কোন দিন</small></button>
+    <button class="tile" onclick="care()"><em>নতুন</em><b>🌿</b>পরিচর্যা সূচি<small>পুরো মৌসুমের কাজ</small></button>
+    <button class="tile" onclick="spray()"><b>🧴</b>স্প্রে গাইড<small>লক্ষণ দেখে সমাধান</small></button>
+    <button class="tile" onclick="dose()"><b>💧</b>ওষুধের মাত্রা<small>পানি ও ট্যাংকের হিসাব</small></button>
+    <button class="tile" onclick="farm()"><b>🧮</b>কৃষি ক্যালকুলেটর<small>জমির মাপ, লাভ-লোকসান</small></button></div>
+  <h2>লাইব্রেরি</h2><div class="tiles">
+    <button class="tile" onclick="tab('s-lib')"><b>🍅</b>সব ফসল</button>
+    <button class="tile" onclick="pests()"><b>🔍</b>বালাই এবং রোগ</button>
+    <button class="tile" onclick="about()"><b>🐛</b>কীটপতঙ্গ ও রোগ সম্পর্কে</button>
+    <button class="tile" onclick="tab('s-ask')"><b>💬</b>প্রশ্ন করুন</button></div>
+  <h2 id="hdT"></h2><div id="hd3"></div></div></div></section>
+
+<section class="screen" id="s-lib"><div class="scroll"><h1>সব ফসল</h1><p class="sub">ফসলে ট্যাপ করে রোগ, চাষের সময়, সার ও পরিচর্যা দেখুন।</p><div id="ll"></div></div></section>
+
+<section class="screen" id="s-ask"><div class="scroll"><h1>কৃষি প্রশ্ন</h1><p class="sub">সার, পোকা, মাটি, চাষের সময়, যা জানতে চান বাংলায় লিখুন।</p>
+  <label class="f" for="q">আপনার প্রশ্ন</label><textarea id="q" rows="4" placeholder="যেমন: টমেটোর পাতা কুঁকড়ে যাচ্ছে, কী করব?"></textarea>
+  <button class="btn" style="margin-top:12px" id="qb" onclick="ask()">উত্তর পান</button><div id="qa"></div></div></section>
+
+<section class="screen" id="s-me"><div class="scroll"><h1>আপনার তথ্য</h1>
+  <div class="card"><h4>আপনার ফসল</h4><div id="m1"></div></div><div class="card"><h4>চাষের জায়গা</h4><div id="m2"></div></div>
+  <button class="btn o" style="margin-top:16px" onclick="resetAll()">তথ্য বদলান</button>
+  <div class="note">এই অ্যাপের পরামর্শ BARI, BRRI ও কৃষি সম্প্রসারণ অধিদপ্তরের প্রকাশিত নির্দেশনার ওপর ভিত্তি করে সাজানো সাধারণ মান। আপনার জমির মাটি ও জাতভেদে বদলাতে পারে। সিদ্ধান্তের আগে স্থানীয় কৃষি কর্মকর্তার পরামর্শ নিন।</div></div></section>
+
+<section class="screen" id="s-sub"><div class="bk"><button aria-label="ফিরুন" onclick="back()">←</button><span id="subT"></span></div><div class="scroll" id="subB"></div></section>
+
+<nav class="nav" id="nav" style="display:none">
+  <button class="on" data-t="s-home" onclick="tab('s-home')"><span>🏠</span>হোম</button>
+  <button data-t="s-lib" onclick="tab('s-lib')"><span>🌾</span>ফসল</button>
+  <button data-t="s-ask" onclick="tab('s-ask')"><span>💬</span>প্রশ্ন</button>
+  <button data-t="s-me" onclick="tab('s-me')"><span>👤</span>আপনি</button></nav>
+</div>
+
+<script>
+/* ===================== ভাগ ৩: কনফিগ (এখানে বদলান) =====================
+   AI-র API key এখানে বসাবেন না। Netlify-র Environment variables-এ GEMINI_API_KEY নামে বসান। */
+const CONFIG={AI:'/.netlify/functions/diagnose'};
+const DEBUG=location.search.includes('debug=1'); /* ঠিকানার শেষে ?debug=1 দিলে শুধু প্রশাসক ত্রুটির কারণ দেখতে পাবেন */
+
+/* ===================== ভাগ ৪: ডাটা (ফসল, রোগ, সার, ওষুধ; এখানে বাড়ান/বদলান) =====================
+   সব সংখ্যা সাধারণ নির্দেশিকা। কৃষি কর্মকর্তাকে দিয়ে যাচাই করে নিন। */
+const TYPE=['ছত্রাকনাশক','কীটনাশক','তামাঘটিত/ব্যাকটেরিয়া','জৈব/নিরাপদ'];
+/* ওষুধ: নাম => [মাত্রা প্রতি লিটার, একক, কত দিন পর পর, সর্বোচ্চ কতবার, ধরন] (লেবেলই চূড়ান্ত) */
+const SP={"ট্রাইসাইক্লাজল":[0.6,"গ্রাম",10,2,0],"আইসোপ্রোথায়োলেন":[1.5,"মিলি",10,2,0],"প্রোপিকোনাজল":[1,"মিলি",12,2,0],"হেক্সাকোনাজল":[2,"মিলি",12,2,0],"ভ্যালিডামাইসিন":[2,"মিলি",10,2,0],"ম্যানকোজেব":[2.5,"গ্রাম",7,4,0],"ক্লোরোথ্যালোনিল":[2,"গ্রাম",8,4,0],"মেটালাক্সিল + ম্যানকোজেব":[2.5,"গ্রাম",7,3,0],"কার্বেন্ডাজিম":[1,"গ্রাম",10,2,0],"ট্রাইফ্লক্সিস্ট্রবিন + টেবুকোনাজল":[0.4,"গ্রাম",14,2,0],"আইপ্রোডিয়ন":[2,"গ্রাম",10,3,0],"সালফার (গন্ধক)":[2,"গ্রাম",10,3,0],"কপার অক্সিক্লোরাইড":[3,"গ্রাম",10,3,2],"পাইমেট্রোজিন":[0.3,"গ্রাম",10,2,1],"ডাইনোটেফুরান":[0.3,"গ্রাম",10,2,1],"ক্লোরানট্রানিলিপ্রোল":[0.3,"মিলি",12,2,1],"ইমামেকটিন বেনজোয়েট":[0.4,"গ্রাম",10,3,1],"স্পিনোসাড":[0.4,"মিলি",10,3,1],"স্পিনেটোরাম":[0.5,"মিলি",10,3,1],"থায়ামেথক্সাম":[0.3,"গ্রাম",12,2,1],"ইমিডাক্লোপ্রিড":[0.5,"মিলি",12,2,1],"অ্যাবামেকটিন (মাকড়ের জন্য)":[0.5,"মিলি",10,2,1],"নিমের তেল":[5,"মিলি",5,6,3]};
+const UN={"শতক":1,"বিঘা":33,"একর":100,"হেক্টর":247.1,"বর্গফুট":1/435.6,"বর্গমিটার":1/40.47};
+const GEO={"ঢাকা":["ঢাকা","গাজীপুর","নারায়ণগঞ্জ","নরসিংদী","মানিকগঞ্জ","মুন্সিগঞ্জ","টাঙ্গাইল","কিশোরগঞ্জ","ফরিদপুর","গোপালগঞ্জ","মাদারীপুর","রাজবাড়ী","শরীয়তপুর"],"চট্টগ্রাম":["চট্টগ্রাম","কক্সবাজার","কুমিল্লা","ব্রাহ্মণবাড়িয়া","চাঁদপুর","ফেনী","নোয়াখালী","লক্ষ্মীপুর","খাগড়াছড়ি","রাঙামাটি","বান্দরবান"],"রাজশাহী":["রাজশাহী","বগুড়া","জয়পুরহাট","নওগাঁ","নাটোর","চাঁপাইনবাবগঞ্জ","পাবনা","সিরাজগঞ্জ"],"খুলনা":["খুলনা","বাগেরহাট","চুয়াডাঙ্গা","যশোর","ঝিনাইদহ","কুষ্টিয়া","মাগুরা","মেহেরপুর","নড়াইল","সাতক্ষীরা"],"বরিশাল":["বরিশাল","বরগুনা","ভোলা","ঝালকাঠি","পটুয়াখালী","পিরোজপুর"],"সিলেট":["সিলেট","হবিগঞ্জ","মৌলভীবাজার","সুনামগঞ্জ"],"রংপুর":["রংপুর","দিনাজপুর","গাইবান্ধা","কুড়িগ্রাম","লালমনিরহাট","নীলফামারী","পঞ্চগড়","ঠাকুরগাঁও"],"ময়মনসিংহ":["ময়মনসিংহ","জামালপুর","নেত্রকোণা","শেরপুর"]};
+const SITES=[["খোলা মাঠ","🏞️","ধান, ভুট্টা, সবজির জমি"],["ছাদবাগান","🏠","ছাদে টব বা ড্রাম"],["উঠান / বসতবাড়ি","🏡","বাড়ির আশেপাশের জমি"],["গ্রিনহাউস / নেট হাউস","🏕️","নিয়ন্ত্রিত পরিবেশ"]];
+const MN=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const ICO={w:'🌱',p:'🔍',n:'🧪',s:'💧'};
+const DISC="⚠️ চূড়ান্ত সিদ্ধান্তের আগে স্থানীয় উপ-সহকারী কৃষি কর্মকর্তা বা কৃষি বিশেষজ্ঞের পরামর্শ নিন। ওষুধ ব্যবহারের আগে প্যাকেটের লেবেল পড়ুন।";
+const SAFE=["ওষুধ ছড়ানোর সময় মাস্ক, গ্লাভস ও লম্বা কাপড় পরুন","বাতাসের উল্টো দিকে দাঁড়িয়ে স্প্রে করবেন না","সকাল ১০টার আগে বা বিকেল ৪টার পর স্প্রে করুন","স্প্রের ২–৩ ঘণ্টার মধ্যে বৃষ্টি হলে আবার দিতে হতে পারে","এক ওষুধ বারবার নয়, পর্যায়ক্রমে ভিন্ন গ্রুপের ওষুধ দিন","ফসল তোলার ৭–১৪ দিন আগে বা লেবেলের অপেক্ষা-সময় মেনে স্প্রে বন্ধ করুন","খালি প্যাকেট শিশুদের নাগালের বাইরে রাখুন, পুকুরে ধোবেন না"];
+
+/* ফসল: ic=আইকন, g=দল, ss=[মৌসুম, বপনের সময়, ফসল তোলার দিন, [মাস]], sp=দূরত্ব/বীজ, w=সেচ, h=ফসল তোলা,
+   fz=[ইউরিয়া,টিএসপি,এমওপি] কেজি/হেক্টর, o=জৈব সার কেজি/হেক্টর, fs=[দিন, ধাপ, ইউ ভাগ, টিএসপি ভাগ, এমওপি ভাগ, নোট],
+   care=[দিন, কাজ, বিবরণ, ধরন(w কাজ/p পর্যবেক্ষণ/n পুষ্টি/s সেচ)], d=[রোগ, লক্ষণ, করণীয়|…, ওষুধ;…] */
+const C={
+"ধান":{ic:"🌾",g:"খাদ্যশস্য",ss:[["আউশ","মার্চ–এপ্রিল বীজতলা, এপ্রিল–মে রোপণ",90,[3,4,5]],["আমন","জুলাই–আগস্ট রোপণ",105,[7,8]],["বোরো","ডিসেম্বর–জানুয়ারি বীজতলা, জানুয়ারি–ফেব্রুয়ারি রোপণ",125,[12,1,2]]],
+ sp:"২৫–৩০ দিনের চারা, সারি ২০ সেমি, গুছি ১৫ সেমি, গুছিতে ২–৩টি চারা",w:"জমিতে ৩–৫ সেমি পানি রাখুন, দানা পাকার ১৫ দিন আগে পানি কমান",h:"শীষের ৮০–৮৫% দানা পাকলে কাটুন",fz:[250,100,100],o:5000,
+ fs:[[0,"শেষ চাষে",0,1,.5,"টিএসপি ও অর্ধেক এমওপি মাটিতে মিশান"],[15,"১ম উপরি প্রয়োগ",1/3,0,0,"কুশি আসার সময়"],[30,"২য় উপরি প্রয়োগ",1/3,0,.5,"সর্বোচ্চ কুশির সময়"],[45,"৩য় উপরি প্রয়োগ",1/3,0,0,"থোড় আসার ৫–৭ দিন আগে"]],
+ care:[[0,"জমি প্রস্তুত","জিপসাম ও জিংক সালফেট লাগলে মাটি পরীক্ষা অনুযায়ী মেশান","n"],[10,"১ম আগাছা দমন","হাত বা যন্ত্রে আগাছা তুলুন","w"],[20,"পোকা পর্যবেক্ষণ","সপ্তাহে ২ বার জমি ঘুরে দেখুন, ডাল পুঁতে পাখি বসার ব্যবস্থা করুন","p"],[25,"২য় আগাছা দমন","","w"],[40,"রোগ পর্যবেক্ষণ","পাতায় দাগ বা পোকা দেখলে ছবি তুলে শনাক্ত করুন","p"],[60,"থোড়-ফুলের সময়","পানি কমতে দেবেন না, ব্লাস্ট ও পোকা নজরে রাখুন","s"]],
+ d:[["ধানের ব্লাস্ট","পাতায় চোখের মতো ধূসর দাগ, শীষ ভেঙে যায়","অতিরিক্ত ইউরিয়া বন্ধ করুন|আক্রান্ত খড় নষ্ট করুন|শুরুতেই স্প্রে করুন","ট্রাইসাইক্লাজল;আইসোপ্রোথায়োলেন"],["বাদামি দাগ","পাতায় ছোট বাদামি গোল দাগ, দানা বিবর্ণ","সুষম সার (পটাশ ও জিংকসহ) দিন|রোগমুক্ত বীজ ব্যবহার করুন","প্রোপিকোনাজল"],["খোল পচা (শিথ ব্লাইট)","খোলে ডিম্বাকৃতি ধূসর দাগ, ধীরে ওপরে ওঠে","ঘন রোপণ এড়ান|আগাছা পরিষ্কার রাখুন|জমিতে পানি জমতে দেবেন না","হেক্সাকোনাজল;ভ্যালিডামাইসিন"],["মাজরা পোকা","মাঝডগা শুকিয়ে যায়, শীষ সাদা হয়ে চিটা হয়","আলোর ফাঁদ বসান|ডিমের গুচ্ছ সংগ্রহ করে নষ্ট করুন","ক্লোরানট্রানিলিপ্রোল"],["বাদামি গাছফড়িং","গোড়ায় ফড়িং, গাছ গোল হয়ে শুকিয়ে যায়","গোড়া লক্ষ করে স্প্রে করুন|অতিরিক্ত ইউরিয়া দেবেন না","পাইমেট্রোজিন;ডাইনোটেফুরান"]]},
+"গম":{ic:"🌿",g:"খাদ্যশস্য",ss:[["রবি","১৫–৩০ নভেম্বর বপন",110,[11]]],
+ sp:"সারি ২০ সেমি, শতকে প্রায় ৫০০ গ্রাম বীজ",w:"বপনের ১৭–২১, ৫০–৫৫ ও ৭০–৭৫ দিনে সেচ",h:"গাছ হলুদ হয়ে দানা শক্ত হলে কাটুন",fz:[200,150,100],o:5000,
+ fs:[[0,"বীজ বপনের সময়",.5,1,1,"টিএসপি ও এমওপি শেষ চাষে মিশান"],[20,"উপরি প্রয়োগ",.5,0,0,"প্রথম সেচের পর (১৭–২১ দিনে)"]],
+ care:[[18,"১ম সেচ","মুকুট শিকড় পর্যায়ে, ১৭–২১ দিনে","s"],[25,"আগাছা দমন","","w"],[40,"পাতার রোগ পর্যবেক্ষণ","পাতায় দাগ দেখলে ছবি তুলুন","p"],[52,"২য় সেচ","ফুল আসার আগে, ৫০–৫৫ দিনে","s"],[72,"৩য় সেচ","দানা গঠনের সময়","s"],[80,"শীষ পর্যবেক্ষণ","সাদা শীষ দেখলে ছবি তুলুন","p"]],
+ d:[["পাতা ঝলসানো","পাতায় বাদামি ডিম্বাকৃতি দাগ, ক্রমে শুকায়","রোগমুক্ত বীজ নিন|সময়মতো বপন করুন|বীজ শোধন করুন","প্রোপিকোনাজল;ম্যানকোজেব"],["গমের ব্লাস্ট","শীষ সাদা হয়ে যায়, দানা চিটা","সময়মতো বপন করুন|রোগমুক্ত বীজ নিন|শীষ আসার সময় নজর রাখুন","ট্রাইফ্লক্সিস্ট্রবিন + টেবুকোনাজল"],["মরিচা (রাস্ট)","পাতায় হলুদ-কমলা গুঁড়োর মতো দাগ","সহনশীল জাত চাষ করুন|আগাম বপন করুন","প্রোপিকোনাজল"]]},
+"ভুট্টা":{ic:"🌽",g:"খাদ্যশস্য",ss:[["রবি","নভেম্বর–ডিসেম্বর বপন",140,[11,12]],["খরিফ-১","ফেব্রুয়ারি–মার্চ বপন",115,[2,3]]],
+ sp:"সারি ৬০ সেমি, গাছ ২০–২৫ সেমি",w:"ফুল আসা ও দানা ভরার সময় সেচ জরুরি",h:"খোসা শুকিয়ে বাদামি ও দানা শক্ত হলে তুলুন",fz:[450,200,150],o:8000,
+ fs:[[0,"বীজ বপনের সময়",0,1,.5,"টিএসপি ও অর্ধেক এমওপি"],[25,"১ম উপরি প্রয়োগ",1/3,0,0,"হাঁটু সমান উচ্চতায়, তারপর মাটি তুলুন"],[45,"২য় উপরি প্রয়োগ",1/3,0,.5,"মোচা আসার আগে"],[65,"৩য় উপরি প্রয়োগ",1/3,0,0,"দানা ভরার সময়"]],
+ care:[[7,"ঘন চারা পাতলা করুন","প্রতি জায়গায় ১টি সুস্থ চারা রাখুন","w"],[15,"১ম সেচ ও আগাছা দমন","","s"],[20,"ফল আর্মিওয়ার্ম পর্যবেক্ষণ","ফানেলে মল বা পাতায় ছিদ্র দেখলে ছবি তুলুন","p"],[45,"সেচ","মোচা আসার আগে","s"],[60,"ফুলের সময় সেচ","এ সময় পানির অভাবে দানা কমে","s"]],
+ d:[["ফল আর্মিওয়ার্ম","ফানেলে কাঠের গুঁড়োর মতো মল, পাতায় ছিদ্র","ছোট অবস্থায় হাতে মারুন|ফেরোমন ফাঁদ বসান","ইমামেকটিন বেনজোয়েট;স্পিনেটোরাম"],["পাতা ঝলসানো","লম্বাটে ধূসর দাগ, পাতা শুকায়","রোগমুক্ত বীজ নিন|ফসল পর্যায়ক্রমে চাষ করুন","ম্যানকোজেব;প্রোপিকোনাজল"]]},
+"আলু":{ic:"🥔",g:"সবজি ও কন্দ",ss:[["রবি","নভেম্বরের মাঝামাঝি–ডিসেম্বরের শুরু",85,[11,12]]],
+ sp:"সারি ৬০ সেমি, গাছ ২৫ সেমি, সুস্থ রোগমুক্ত বীজ আলু",w:"২৫–৩০ দিনে মাটি তুলে সেচ, মোট ২–৩ বার",h:"পাতা হলুদ হয়ে শুকালে (৮০–৯০ দিন) তুলুন",fz:[240,160,210],o:10000,
+ fs:[[0,"রোপণের সময়",.5,1,.67,"সার যেন বীজ আলুর গায়ে না লাগে"],[28,"উপরি প্রয়োগ",.5,0,.33,"মাটি তুলে দেওয়ার সময়, তারপর হালকা সেচ"]],
+ care:[[10,"১ম সেচ","রোপণের ১০–১৫ দিনে হালকা সেচ","s"],[28,"মাটি তোলা ও সেচ","উপরি সারের সঙ্গে","w"],[35,"নাবি ধসা পর্যবেক্ষণ","কুয়াশা বা মেঘলা দিনে ম্যানকোজেব প্রতিরোধমূলক স্প্রে করা যায়, সুস্থ আবহাওয়ায় বিষ দেবেন না","p"],[60,"জাব পোকা পর্যবেক্ষণ","পাতা কুঁকড়ালে ছবি তুলুন","p"],[75,"সেচ বন্ধ","তোলার ১০ দিন আগে সেচ বন্ধ করুন","s"]],
+ d:[["নাবি ধসা","ভেজা কালচে দাগ, নিচে সাদা ছত্রাক, কুয়াশায় দ্রুত ছড়ায়","মেঘলা বা কুয়াশায় আগাম স্প্রে করুন|আক্রান্ত গাছ সরান","মেটালাক্সিল + ম্যানকোজেব;ম্যানকোজেব"],["আগাম ধসা","নিচের পাতায় বৃত্তাকার বাদামি দাগ","আক্রান্ত পাতা সরান|ফসল পর্যায়ক্রমে চাষ করুন","ম্যানকোজেব;ক্লোরোথ্যালোনিল"],["জাব পোকা ও ভাইরাস","পাতা কুঁকড়ায়, গাছ খর্ব","সুস্থ বীজ ব্যবহার করুন|হলুদ আঠালো ফাঁদ দিন","থায়ামেথক্সাম;নিমের তেল"]]},
+"পাট":{ic:"🌿",g:"আঁশ ফসল",ss:[["তোষা/দেশি","মার্চ–এপ্রিল বপন",110,[3,4,5]]],
+ sp:"লাইনে বুনলে সারি ২৫–৩০ সেমি, হেক্টরে ৬–৭ কেজি (শতকে প্রায় ২৮ গ্রাম) বীজ",w:"বৃষ্টি না হলে ১–২ সেচ",h:"ফুল আসা থেকে ফল ধরার সময় কাটুন (৯০–১২০ দিন)",fz:[120,40,60],o:5000,
+ fs:[[0,"বপনের সময়",0,1,1,"টিএসপি ও এমওপি শেষ চাষে মিশান"],[20,"১ম উপরি প্রয়োগ",.5,0,0,"চারা পাতলা করার পর"],[40,"২য় উপরি প্রয়োগ",.5,0,0,"দ্রুত বৃদ্ধির সময়"]],
+ care:[[15,"চারা পাতলা করুন","গাছে গাছে ৫–৭ সেমি দূরত্ব রাখুন","w"],[20,"১ম নিড়ানি","আগাছা তুলুন","w"],[35,"২য় নিড়ানি","","w"],[45,"বিছা পোকা পর্যবেক্ষণ","পাতায় দল বেঁধে পোকা দেখলে ছবি তুলুন","p"],[60,"হলুদ মাকড় পর্যবেক্ষণ","খরায় ডগার পাতা কুঁকড়ালে ছবি তুলুন","p"]],
+ d:[["কাণ্ড পচা","কাণ্ডে কালচে দাগ, গাছ ঢলে পড়ে","বীজ শোধন করুন|জমিতে পানি জমতে দেবেন না","কার্বেন্ডাজিম"],["বিছা পোকা","দল বেঁধে পাতা খেয়ে ফেলে","দলসহ পাতা তুলে নষ্ট করুন|আলোর ফাঁদ","ক্লোরানট্রানিলিপ্রোল"],["হলুদ মাকড়","ডগার পাতা কুঁকড়ে নিচে বাঁকা, খরায় বেশি","খরায় হালকা সেচ দিন","অ্যাবামেকটিন (মাকড়ের জন্য);সালফার (গন্ধক)"]]},
+"সরিষা":{ic:"🌼",g:"তেল ও ডাল",ss:[["রবি","অক্টোবরের শেষ–নভেম্বর বপন",85,[10,11]]],
+ sp:"সারি ৩০ সেমি, হেক্টরে ৬–৭ কেজি (শতকে প্রায় ২৫–৩০ গ্রাম) বীজ",w:"২৫–৩০ দিনে ও ফল গঠনের সময় ১–২ সেচ",h:"৮০% ফল হলুদ হলে কাটুন",fz:[250,170,85],o:5000,
+ fs:[[0,"শেষ চাষে",.5,1,1,"টিএসপি ও এমওপি মাটিতে মিশান"],[22,"উপরি প্রয়োগ",.5,0,0,"ফুল আসার আগে সেচের সঙ্গে"]],
+ care:[[15,"চারা পাতলা করুন","গাছে গাছে ৮–১০ সেমি","w"],[25,"১ম সেচ","","s"],[30,"জাব পোকা পর্যবেক্ষণ","ডগা ও ফুলে সবুজ পোকা দেখলে ছবি তুলুন","p"],[35,"বোরন","ফুল আসার আগে মাটি পরীক্ষায় বোরনের ঘাটতি থাকলে দিন","n"],[50,"২য় সেচ","ফল গঠনের সময়","s"],[60,"পাতা দাগ রোগ পর্যবেক্ষণ","","p"]],
+ d:[["অল্টারনারিয়া পাতা দাগ","বাদামি গোল দাগ, কেন্দ্রে বলয়","রোগমুক্ত বীজ নিন|সময়মতো বপন করুন","আইপ্রোডিয়ন;ম্যানকোজেব"],["জাব পোকা","ডগা ও ফুলে সবুজ-ধূসর পোকা, আঠালো ভাব","ডগা কেটে নষ্ট করুন|হলুদ আঠালো ফাঁদ","নিমের তেল;ইমিডাক্লোপ্রিড"]]},
+"মসুর":{ic:"🫘",g:"তেল ও ডাল",ss:[["রবি","১৫ অক্টোবর–১৫ নভেম্বর বপন",110,[10,11]]],
+ sp:"সারি ২৫–৩০ সেমি, শতকে প্রায় ১৫০ গ্রাম বীজ",w:"সাধারণত সেচ ছাড়া, খুব শুষ্ক হলে ফুল আসার আগে ১টি সেচ",h:"৮০% ফল বাদামি হলে কাটুন",fz:[40,100,40],o:3000,
+ fs:[[0,"বপনের সময়",1,1,1,"সব সার একসঙ্গে। রাইজোবিয়াম টিকা বীজে মাখালে ভালো"]],
+ care:[[20,"আগাছা দমন","১ম নিড়ানি","w"],[40,"মরিচা ও ঝলসানো রোগ পর্যবেক্ষণ","পাতায় বাদামি দাগ দেখলে ছবি তুলুন","p"],[55,"ফুল ও ফল গঠন","ঘন কুয়াশায় রোগের ঝুঁকি বাড়ে, নজরে রাখুন","p"]],
+ d:[["মরিচা রোগ","পাতায় বাদামি ফোসকা","রোগমুক্ত বীজ নিন|সময়মতো বপন করুন","ম্যানকোজেব;প্রোপিকোনাজল"],["গোড়া পচা","চারা ঢলে পড়ে, গোড়ায় ছত্রাক","বীজ শোধন করুন|জমি ভালো নিষ্কাশন রাখুন","কার্বেন্ডাজিম"]]},
+"টমেটো":{ic:"🍅",g:"সবজি ও কন্দ",ss:[["শীতকালীন","অক্টোবর–নভেম্বর চারা রোপণ",65,[10,11,12]]],
+ sp:"৩০ দিনের চারা, সারি ৬০ সেমি, গাছ ৪০ সেমি, খুঁটি বা মাচা দিন",w:"মাটি ভেজা রাখুন, পানি জমতে দেবেন না, পাতায় পানি ছিটাবেন না",h:"ফল লালচে হলে প্রতি ৩–৪ দিন পর তুলুন",fz:[250,200,200],o:10000,
+ fs:[[0,"জমি তৈরির সময়",.2,1,.3,"গোবর সার ও টিএসপি মাটিতে মিশান"],[15,"১ম উপরি প্রয়োগ",.25,0,.2,"গোড়া থেকে ৫ সেমি দূরে"],[30,"২য় উপরি প্রয়োগ",.25,0,.25,"ফুল আসার আগে"],[45,"৩য় উপরি প্রয়োগ",.3,0,.25,"ফল ধরার সময়"]],
+ care:[[7,"খুঁটি বা মাচা","রোপণের ১০ দিনের মধ্যে দিন","w"],[10,"সেচ ও মালচিং","মাটি ভেজা রাখুন, খড়ের মালচ দিন","s"],[25,"ফুলের সময় পুষ্টি","ফুল ঝরা বা ফল ফাটলে বোরন-ক্যালসিয়ামের ঘাটতি থাকতে পারে, মাটি পরীক্ষা করুন","n"],[35,"ধসা পর্যবেক্ষণ","কুয়াশা বা মেঘলা দিনে পাতায় দাগ দেখলে ছবি তুলুন","p"],[50,"ফল ছিদ্রকারী পোকা পর্যবেক্ষণ","ফলে ছিদ্র দেখলে ছবি তুলুন","p"]],
+ d:[["আগাম ধসা","নিচের পাতায় বৃত্তাকার বাদামি দাগ","আক্রান্ত পাতা সরান|ফসল পর্যায়ক্রমে চাষ করুন","ম্যানকোজেব;ক্লোরোথ্যালোনিল"],["নাবি ধসা","পাতা ও ফলে ভেজা কালচে দাগ, কুয়াশায় দ্রুত","রোগের শুরুতেই স্প্রে করুন|বাতাস চলাচল বাড়ান","মেটালাক্সিল + ম্যানকোজেব"],["পাতা কোঁকড়ানো ভাইরাস","পাতা কুঁকড়ে ছোট হয়, গাছ খর্ব","আক্রান্ত গাছ তুলে ফেলুন|সাদা মাছি দমন করুন","থায়ামেথক্সাম;নিমের তেল"],["ফল ছিদ্রকারী পোকা","ফলে ছিদ্র ও ভেতরে পোকা","আক্রান্ত ফল নষ্ট করুন|ফেরোমন ফাঁদ","ইমামেকটিন বেনজোয়েট;স্পিনোসাড"],["ঢলে পড়া (ব্যাকটেরিয়াল)","সবুজ গাছ হঠাৎ ঢলে পড়ে","আক্রান্ত গাছ তুলে ফেলুন|পানি জমতে দেবেন না","কপার অক্সিক্লোরাইড"]]},
+"বেগুন":{ic:"🍆",g:"সবজি ও কন্দ",ss:[["শীতকালীন","অক্টোবর–নভেম্বর চারা রোপণ",65,[10,11]],["বর্ষাকালীন","জুন–আগস্ট চারা রোপণ",65,[6,7,8]]],
+ sp:"৩০–৩৫ দিনের চারা, সারি ৭৫ সেমি, গাছ ৬০ সেমি",w:"১০–১৫ দিন পর পর সেচ, মাটি আর্দ্র রাখুন",h:"ফল চকচকে ও কচি থাকতে তুলুন",fz:[250,200,200],o:10000,
+ fs:[[0,"জমি তৈরির সময়",.2,1,.4,"গোবর সার ও টিএসপি মাটিতে মিশান"],[20,"১ম উপরি প্রয়োগ",.2,0,0,"নতুন ডগা আসার সময়"],[40,"২য় উপরি প্রয়োগ",.2,0,.3,"ফুল আসার সময়"],[60,"৩য় উপরি প্রয়োগ",.2,0,0,"ফল তোলা শুরুর সময়"],[80,"৪র্থ উপরি প্রয়োগ",.2,0,.3,"ফল তোলার মাঝামাঝি"]],
+ care:[[10,"সেচ ও মালচিং","মাটি আর্দ্র রাখুন","s"],[25,"ডগা পর্যবেক্ষণ","ঢলে পড়া ডগা দেখলে কেটে মাটিতে পুঁতুন","p"],[40,"ফেরোমন ফাঁদ","ফল ছিদ্রকারী পোকার জন্য ফাঁদ বসান","w"],[55,"ফল পর্যবেক্ষণ","ফলে ছিদ্র দেখলে ছবি তুলুন","p"]],
+ d:[["ডগা ও ফল ছিদ্রকারী পোকা","ডগা ঢলে পড়ে, ফলে ছিদ্র ও মল","আক্রান্ত ডগা ও ফল কেটে মাটিতে পুঁতুন|ফেরোমন ফাঁদ বসান","ইমামেকটিন বেনজোয়েট;স্পিনোসাড"],["ঢলে পড়া (ব্যাকটেরিয়াল উইল্ট)","সবুজ গাছ হঠাৎ ঢলে পড়ে","আক্রান্ত গাছ তুলে ফেলুন|ফসল পর্যায়ক্রমে চাষ করুন|পানি জমতে দেবেন না","কপার অক্সিক্লোরাইড"],["জ্যাসিড ও সাদা মাছি","পাতা কুঁকড়ায়, হলুদ হয়ে যায়","হলুদ আঠালো ফাঁদ দিন","থায়ামেথক্সাম;নিমের তেল"]]},
+"মরিচ":{ic:"🌶️",g:"সবজি ও কন্দ",ss:[["শীতকালীন","অক্টোবর–নভেম্বর চারা রোপণ",70,[10,11]],["গ্রীষ্মকালীন","ফেব্রুয়ারি–মার্চ চারা রোপণ",70,[2,3]]],
+ sp:"সারি ৬০ সেমি, গাছ ৪০ সেমি",w:"১০–১৫ দিন পর পর হালকা সেচ",h:"কাঁচা মরিচ ফল ধরার ৩–৪ সপ্তাহ পর থেকে তোলা যায়",fz:[200,180,120],o:8000,
+ fs:[[0,"জমি তৈরির সময়",.2,1,.5,"গোবর সার ও টিএসপি মাটিতে মিশান"],[20,"১ম উপরি প্রয়োগ",.3,0,0,"নতুন ডগা আসার সময়"],[40,"২য় উপরি প্রয়োগ",.3,0,.25,"ফুল আসার সময়"],[60,"৩য় উপরি প্রয়োগ",.2,0,.25,"ফল ধরার সময়"]],
+ care:[[10,"সেচ","হালকা সেচ দিন","s"],[25,"কোঁকড়ানো পাতা পর্যবেক্ষণ","পাতা কুঁকড়ালে ও সাদা মাছি দেখলে ছবি তুলুন","p"],[45,"ফল পচা পর্যবেক্ষণ","ফলে দাগ দেখলে ছবি তুলুন","p"]],
+ d:[["পাতা কোঁকড়ানো","পাতা কুঁকড়ে ছোট, গাছ খর্ব (মাকড়, থ্রিপস বা ভাইরাস)","আক্রান্ত গাছ তুলে ফেলুন|হলুদ আঠালো ফাঁদ ব্যবহার করুন","অ্যাবামেকটিন (মাকড়ের জন্য);থায়ামেথক্সাম"],["ফল পচা (এনথ্রাকনোজ)","ফলে গোল ডুবানো কালচে দাগ","রোগমুক্ত বীজ নিন|আক্রান্ত ফল সরান","ম্যানকোজেব;কার্বেন্ডাজিম"],["ঢলে পড়া","গাছ হঠাৎ ঢলে পড়ে","আক্রান্ত গাছ তুলে ফেলুন|পানি জমতে দেবেন না","কপার অক্সিক্লোরাইড"]]},
+"পেঁয়াজ":{ic:"🧅",g:"সবজি ও কন্দ",ss:[["রবি","অক্টোবর–নভেম্বর বীজতলা, নভেম্বর–ডিসেম্বর রোপণ",100,[10,11,12]]],
+ sp:"৪৫–৫০ দিনের চারা, সারি ১৫ সেমি, গাছ ১০ সেমি",w:"৭–১০ দিন পর পর হালকা সেচ, তোলার ২ সপ্তাহ আগে সেচ বন্ধ",h:"পাতা হলুদ হয়ে ঢলে পড়লে তুলুন",fz:[130,170,120],o:10000,
+ fs:[[0,"জমি তৈরির সময়",0,1,.5,"গোবর সার ও টিএসপি মিশান"],[15,"১ম উপরি প্রয়োগ",1/3,0,0,"চারা ধরে গেলে"],[30,"২য় উপরি প্রয়োগ",1/3,0,.25,"গোড়া মোটা হতে শুরু করলে"],[45,"৩য় উপরি প্রয়োগ",1/3,0,.25,"কন্দ গঠনের সময়"]],
+ care:[[10,"সেচ ও আগাছা দমন","","s"],[30,"থ্রিপস পর্যবেক্ষণ","পাতায় রুপালি দাগ দেখলে ছবি তুলুন","p"],[45,"পাতা দাগ রোগ পর্যবেক্ষণ","পাতায় বেগুনি দাগ দেখলে ছবি তুলুন","p"],[85,"সেচ বন্ধ","তোলার ২ সপ্তাহ আগে","s"]],
+ d:[["পার্পল ব্লচ","পাতায় বেগুনি-বাদামি দাগ, পাতা ভেঙে পড়ে","ঘন রোপণ এড়ান|আগাছা পরিষ্কার রাখুন","আইপ্রোডিয়ন;ম্যানকোজেব"],["থ্রিপস","পাতায় রুপালি দাগ, পাতা কুঁকড়ায়","নীল আঠালো ফাঁদ দিন","স্পিনোসাড;থায়ামেথক্সাম"],["গোড়া পচা","গোড়া পচে গাছ হলুদ হয়ে মরে যায়","জমি ভালো নিষ্কাশন রাখুন|ফসল পর্যায়ক্রমে চাষ করুন","কার্বেন্ডাজিম"]]},
+"ফুলকপি":{ic:"🥦",g:"সবজি ও কন্দ",ss:[["শীতকালীন","সেপ্টেম্বর–অক্টোবর বীজতলা, অক্টোবর–নভেম্বর রোপণ",65,[9,10,11]]],
+ sp:"২৫–৩০ দিনের চারা, সারি ৬০ সেমি, গাছ ৪৫ সেমি",w:"১০ দিন পর পর সেচ, মাটি ভেজা রাখুন",h:"কপির মাথা শক্ত ও সাদা থাকতে কাটুন",fz:[330,200,200],o:10000,
+ fs:[[0,"জমি তৈরির সময়",.2,1,.5,"গোবর সার ও টিএসপি মিশান"],[15,"১ম উপরি প্রয়োগ",.3,0,0,"চারা ধরে গেলে"],[30,"২য় উপরি প্রয়োগ",.3,0,.25,"বৃদ্ধির সময়"],[45,"৩য় উপরি প্রয়োগ",.2,0,.25,"কপি আসার আগে"]],
+ care:[[10,"সেচ ও আগাছা দমন","","s"],[20,"বোরন","কপি বাদামি হলে বা ফাঁপা হলে বোরনের ঘাটতি হতে পারে, মাটি পরীক্ষা অনুযায়ী দিন","n"],[30,"চিটা পোকা পর্যবেক্ষণ","পাতায় ছিদ্র দেখলে ছবি তুলুন","p"],[45,"কালো পচা পর্যবেক্ষণ","পাতার কিনারায় V আকৃতির দাগ দেখলে ছবি তুলুন","p"]],
+ d:[["কালো পচা (ব্যাকটেরিয়া)","পাতার কিনারায় V আকৃতির হলুদ-বাদামি দাগ","রোগমুক্ত বীজ নিন|ফসল পর্যায়ক্রমে চাষ করুন|আক্রান্ত পাতা সরান","কপার অক্সিক্লোরাইড"],["চিটা পোকা (ডায়মন্ডব্যাক মথ)","পাতায় ছোট ছিদ্র, পোকা পাতার নিচে","ফেরোমন ফাঁদ বসান|আক্রান্ত পাতা সরান","স্পিনোসাড;ইমামেকটিন বেনজোয়েট"],["চারা ধসা","বীজতলায় চারা গোড়ায় পচে ঢলে পড়ে","বীজতলা উঁচু ও নিষ্কাশনযোগ্য রাখুন|বীজ শোধন করুন","কার্বেন্ডাজিম"]]},
+"লাউ":{ic:"🥒",g:"সবজি ও কন্দ",ss:[["শীতকালীন","অক্টোবর–ডিসেম্বর বীজ বপন",65,[10,11,12]],["গ্রীষ্মকালীন","ফেব্রুয়ারি–মার্চ বীজ বপন",65,[2,3]]],
+ sp:"মাদা ১.৫–২ মিটার দূরে, মাদায় ২–৩টি বীজ, মাচা দিন",w:"মাদায় ৫–৭ দিন পর পর সেচ",h:"ফল কচি ও চকচকে থাকতে তুলুন",fz:[150,150,100],o:10000,
+ fs:[[0,"মাদা তৈরির সময়",.2,1,.4,"গোবর সার ও টিএসপি মাদার মাটিতে মিশান"],[25,"১ম উপরি প্রয়োগ",.3,0,0,"লতা ছড়ানোর সময়"],[45,"২য় উপরি প্রয়োগ",.3,0,.3,"ফুল আসার সময়"],[65,"৩য় উপরি প্রয়োগ",.2,0,.3,"ফল ধরার সময়"]],
+ care:[[7,"চারা পাতলা করুন","মাদায় ১–২টি সুস্থ চারা রাখুন","w"],[15,"মাচা দিন","লতা ওপরে তুলে দিন","w"],[40,"গুঁড়া ছত্রাক পর্যবেক্ষণ","পাতায় সাদা গুঁড়ো দেখলে ছবি তুলুন","p"],[50,"ফলের মাছি","ফেরোমন ফাঁদ বা আক্রান্ত ফল নষ্ট করুন","p"]],
+ d:[["গুঁড়া ছত্রাক (পাউডারি মিলডিউ)","পাতায় সাদা গুঁড়োর মতো আস্তরণ","আক্রান্ত পাতা সরান|বাতাস চলাচল বাড়ান","সালফার (গন্ধক);হেক্সাকোনাজল"],["ফলের মাছি","ফলে ছিদ্র, ভেতরে পোকা, ফল পচে ঝরে","ফেরোমন ফাঁদ বসান|আক্রান্ত ফল মাটিতে পুঁতুন|ফল ব্যাগিং করুন",""],["লাল কুমড়া বিটল","চারা গাছের পাতা খেয়ে ফেলে","সকালে হাতে ধরে মারুন|চারায় জাল দিন","নিমের তেল;থায়ামেথক্সাম"]]}
+};
+Object.keys(C).forEach(k=>{C[k].d=C[k].d.map(a=>({n:a[0],s:a[1],c:a[2].split('|'),m:a[3]?a[3].split(';'):[]}))});
+
+/* ===================== ভাগ ৫: সাধারণ সহায়ক ফাংশন ===================== */
+const $=i=>document.getElementById(i);
+const esc=t=>{const d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML};
+const bn=(n,d=1)=>Number(n).toLocaleString('bn-BD',{maximumFractionDigits:d});
+const kg=x=>x<1?bn(x*1000,0)+' গ্রাম':bn(x,1)+' কেজি';
+const dd=(n,b)=>{const d=b?new Date(b+'T00:00:00'):new Date();d.setDate(d.getDate()+n);const x=bdate(d);return d.toLocaleDateString('bn-BD',{day:'numeric',month:'long'})+' ('+bnum(x.d)+' '+x.m+')'};
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const err=t=>`<div class="note" style="background:var(--redbg);color:var(--red)">${t}</div>`;
+const opts=(a,sel)=>a.map(k=>`<option value="${k}"${k===sel?' selected':''}>${k}</option>`).join('');
+const usel=id=>`<select id="${id}">${Object.keys(UN).map(u=>`<option>${u}</option>`).join('')}</select>`;
+const ninp=(id,ph,v)=>`<input type="number" id="${id}" min="0" step="any" inputmode="decimal" placeholder="${ph||''}" value="${v==null?'':v}">`;
+const dinp=(id,fn)=>`<input type="date" id="${id}" value="${today()}"${fn?` onchange="${fn}"`:''}>`;
+const cropsFirst=()=>{const a=Object.keys(C);return a.filter(k=>S.crops.includes(k)).concat(a.filter(k=>!S.crops.includes(k)))};
+const season=()=>{const m=new Date().getMonth()+1;
+  if(m>=11||m<=2)return['❄️','শীত/রবি মৌসুম: গম, আলু, সরিষা, মসুর ও শীতের সবজির সময়। কুয়াশায় নাবি ধসার ঝুঁকি বেশি, নজর রাখুন।','শীত'];
+  if(m<=5)return['☀️','গ্রীষ্ম: সেচ ও মালচিংয়ে মনোযোগ দিন। বোরো ধান কাটা ও আউশ-পাটের সময়। গরমে মাকড় ও সাদা মাছি বাড়ে।','গ্রীষ্ম'];
+  if(m<=9)return['🌧️','বর্ষা: আমন রোপণের মৌসুম। জমিতে পানি জমতে দেবেন না, ছত্রাক ও পোকা বাড়ে।','বর্ষা'];
+  return['🌾','আমন ধানের ফুল-দানার সময়। পোকা ও ব্লাস্ট নজরে রাখুন, রবি ফসলের জমি প্রস্তুত করুন।','শরৎ']};
+
+/* ===================== ভাগ ৬: স্টেট ও নেভিগেশন ===================== */
+let S={crops:[],site:null,div:'',dist:'',cur:0},H=[],TAB='s-home';
+const show=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));$('nav').style.display=id.startsWith('s-ob')?'none':'flex'};
+const tab=id=>{TAB=id;H=[];document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===id));if(id==='s-me')meR();if(id==='s-lib')libR();show(id)};
+const sub=(t,h)=>{H.push([t,h]);paint()};
+const paint=()=>{const x=H[H.length-1];$('subT').textContent=x[0];$('subB').innerHTML=x[1];$('subB').scrollTop=0;show('s-sub')};
+const back=()=>{H.pop();H.length?paint():tab(TAB)};
+const save=()=>{try{localStorage.setItem('ksv4',JSON.stringify(S))}catch(e){}};
+
+/* ===================== ভাগ ৭: অনবোর্ডিং ===================== */
+function obC(){$('cg').innerHTML=Object.keys(C).map(k=>{const o=S.crops.includes(k);return `<button class="pick${o?' sel':''}" aria-pressed="${o}" onclick="pc('${k}')"><b>${C[k].ic}</b>${k}</button>`}).join('');$('cn').disabled=!S.crops.length}
+function pc(k){const i=S.crops.indexOf(k);i>-1?S.crops.splice(i,1):S.crops.push(k);obC()}
+function obS(){$('sg').innerHTML=SITES.map((c,i)=>`<button class="opt${S.site===i?' sel':''}" onclick="S.site=${i};obS();chk()"><b>${c[1]}</b><div><span>${c[0]}</span><small>${c[2]}</small></div></button>`).join('')}
+function fillD(){const v=$('dv').value;$('ds').innerHTML=v?'<option value="">জেলা বেছে নিন</option>'+GEO[v].map(d=>`<option>${d}</option>`).join(''):'<option value="">আগে বিভাগ বেছে নিন</option>'}
+function chk(){$('wn').disabled=!(S.site!==null&&(S.outside?!!S.dist:($('dv').value&&$('ds').value)))}
+function finish(){if(!S.outside){S.div=$('dv').value;S.dist=$('ds').value}save();home();tab('s-home')}
+function resetAll(){S={crops:[],site:null,div:'',dist:'',cur:0};try{localStorage.removeItem('ksv4')}catch(e){}obC();obS();$('wn').disabled=true;show('s-ob1')}
+
+/* ===================== ভাগ ৮: হোম ===================== */
+function home(){const d=new Date(),mo=d.getMonth()+1,s=season();
+  const bd=bdate(d);$('loc').textContent='📍 '+S.dist+(S.outside&&S.div?', '+S.div:'');$('dt2').textContent=d.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'})+' · '+bd.r;$('ssn').textContent=bnum(bd.d)+' '+bd.m+' '+bnum(bd.y);
+  $('hc').innerHTML=cropsFirst().map(k=>`<button class="chip${S.crops.includes(k)?' mine':''}" onclick="cropPage('${k}')"><i>${C[k].ic}</i>${k}</button>`).join('');
+  $('sea').innerHTML=`<b class="i">${s[0]}</b><div>${s[1]}</div>`;
+  const now=[];Object.keys(C).forEach(k=>C[k].ss.forEach(x=>{if(x[3].includes(mo))now.push([k,x])}));
+  $('now').innerHTML=now.length?now.map(([k,x])=>`<button class="nowc" onclick="cropPage('${k}')"><b>${C[k].ic}</b>${k}<small>${x[0]} · ফসল ~${bn(x[2],0)} দিনে</small></button>`).join(''):'<div class="sub">এই মাসের জন্য তালিকা নেই।</div>';
+  const k=S.crops[S.cur%S.crops.length]||'ধান';$('hdT').textContent=k+': সাধারণ রোগ ও পোকা';
+  $('hd3').innerHTML=C[k].d.map((x,i)=>`<button class="row" onclick="dis('${k}',${i})"><b class="i">🍂</b><div>${esc(x.n)}<small>${esc(x.s)}</small></div>›</button>`).join('')}
+function libR(){const gs={};Object.keys(C).forEach(k=>{(gs[C[k].g]=gs[C[k].g]||[]).push(k)});
+  $('ll').innerHTML=Object.keys(gs).map(g=>`<h2>${g}</h2>`+gs[g].map(k=>`<button class="row" onclick="cropPage('${k}')"><b class="i">${C[k].ic}</b><div>${k}<small>${C[k].d.length}টি রোগ/পোকা · ${C[k].ss.map(x=>x[0]).join(', ')}</small></div>›</button>`).join('')).join('')}
+function meR(){$('m1').textContent=S.crops.map(k=>C[k].ic+' '+k).join('   ');$('m2').textContent=SITES[S.site][1]+' '+SITES[S.site][0]+' · '+S.dist+', '+S.div}
+
+/* ===================== ভাগ ৯: ফসলের পাতা (ভেতরের অপশন) ===================== */
+function cropPage(k){const c=C[k];sub(k,`<div class="cp"><b>${c.ic}</b><div><h1>${k}</h1><small>${c.g} · ${c.ss.map(x=>x[0]).join(', ')}</small></div></div>
+<h2>কী জানতে চান?</h2><div class="tiles">
+<button class="tile" onclick="dList('${k}')"><b>🍂</b>রোগ ও সমাধান<small>${c.d.length}টি সমস্যা</small></button>
+<button class="tile" onclick="calCrop('${k}')"><b>🗓️</b>চাষের ক্যালেন্ডার<small>কখন বপন, কবে ফসল</small></button>
+<button class="tile" onclick="fert('${k}')"><b>🧪</b>সারের হিসাব<small>কত কেজি, কোন দিন</small></button>
+<button class="tile" onclick="care('${k}')"><b>🌿</b>পরিচর্যা সূচি<small>সিরিয়াল বাই সিরিয়াল</small></button>
+<button class="tile" onclick="openScan('${k}')" style="grid-column:1/-1"><b>📷</b>ছবি দিয়ে সমস্যা শনাক্ত করুন<small>ক্যামেরায় ছবি তুলুন, AI রোগ চিনে দেবে</small></button></div>
+<h2>এক নজরে চাষ</h2><div class="card"><h4>🌱 দূরত্ব ও বীজ</h4>${c.sp}</div><div class="card"><h4>💧 সেচ</h4>${c.w}</div><div class="card"><h4>🧺 ফসল তোলা</h4>${c.h}</div>`)}
+function dList(k){sub(k+': রোগ ও সমাধান','<div class="why">💡 যে লক্ষণ দেখছেন তার ওপর ট্যাপ করুন, সমাধান পাবেন।</div>'+C[k].d.map((x,i)=>`<button class="row" onclick="dis('${k}',${i})"><b class="i">🍂</b><div>${esc(x.n)}<small>${esc(x.s)}</small></div>›</button>`).join('')+`<button class="btn o" style="margin-top:16px" onclick="openScan('${k}')">📷 ছবি দিয়ে নিশ্চিত হোন</button>`)}
+function dis(k,i){const x=C[k].d[i],f=SP[x.m[0]];let tl='';
+  if(f)for(let n=0;n<f[3];n++)tl+=`<div class="tl"><b>স্প্রে ${bn(n+1,0)} · ${dd(n*f[2])}</b><small>${n?'এখনো লক্ষণ থাকলে দিন, সেরে গেলে বন্ধ করুন':'লক্ষণ দেখার সঙ্গে সঙ্গে, সকালে বা বিকেলে'}</small></div>`;
+  sub(x.n,`<div class="card"><span class="tag">${k}</span><h4 style="margin-top:8px">লক্ষণ</h4><p>${esc(x.s)}</p></div>
+<div class="card"><h4>আগে এগুলো করুন (ওষুধ ছাড়া)</h4><ul>${x.c.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+${x.m.length?`<div class="card"><h4>ওষুধের সক্রিয় উপাদান</h4><small style="color:var(--mute)">ছোট আক্রমণে ওষুধ লাগে না। বাড়লে তবেই দিন।</small>${x.m.map((m,mi)=>{const p=SP[m];return `<div class="mc"><b>${esc(m)}</b><small>${p?TYPE[p[4]]:''}</small>${p?`<div>প্রতি লিটার পানিতে <b>${bn(p[0])} ${p[1]}</b></div><div>প্রতি <b>${bn(p[2],0)} দিন</b> পর পর, সর্বোচ্চ <b>${bn(p[3],0)} বার</b></div><button class="btn o" style="margin-top:8px;padding:9px;font-size:15px" onclick="dose('${k}',${i},${mi})">মাত্রা হিসাব করুন</button>`:''}</div>`}).join('')}</div>`:''}
+${tl?`<div class="card"><h4>স্প্রের সময়সূচি (প্রথম ওষুধে)</h4>${tl}</div>`:''}
+<div class="card"><h4>নিরাপদে স্প্রে করার নিয়ম</h4><ul>${SAFE.map(t=>`<li>${t}</li>`).join('')}</ul></div><div class="note">${DISC} মাত্রা ফর্মুলেশন ভেদে আলাদা হতে পারে, প্যাকেটের লেবেলই চূড়ান্ত।</div>
+<button class="btn o" style="margin-top:14px" onclick="openScan('${k}')">📷 ছবি দিয়ে নিশ্চিত হোন</button>`)}
+function spray(){const ks=cropsFirst();sub('স্প্রে গাইড',`<div class="why">💡 ফসল বেছে নিন, তারপর যে লক্ষণ দেখছেন তাতে ট্যাপ করুন।</div><div class="seg" id="sg2">${ks.map(k=>`<button data-k="${k}" onclick="spg('${k}')">${C[k].ic} ${k}</button>`).join('')}</div><div id="spl"></div>`);spg(ks[0])}
+function spg(k){document.querySelectorAll('#sg2 button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('spl').innerHTML='<h2>কোন লক্ষণ দেখছেন?</h2>'+C[k].d.map((x,i)=>`<button class="row" onclick="dis('${k}',${i})"><b class="i">🍂</b><div>${esc(x.s)}<small>সম্ভাব্য সমস্যা: ${esc(x.n)}</small></div>›</button>`).join('')}
+function pests(){sub('বালাই এবং রোগ','<input id="ps" type="search" placeholder="রোগ বা ফসলের নাম লিখুন"><div id="pl"></div>');$('ps').oninput=pf;pf()}
+function pf(){const q=($('ps').value||'').trim();let h='';Object.keys(C).forEach(k=>C[k].d.forEach((x,i)=>{if(!q||(k+x.n+x.s).includes(q))h+=`<button class="row" onclick="dis('${k}',${i})"><b class="i">🍂</b><div>${esc(x.n)}<small>${k} · ${esc(x.s)}</small></div>›</button>`}));$('pl').innerHTML=h||err('কিছু পাওয়া যায়নি।')}
+function about(){sub('কীটপতঙ্গ ও রোগ সম্পর্কে',`<div class="card"><h4>কীভাবে চিনবেন</h4><ul><li><b>পোকা:</b> পাতা বা ফলে ছিদ্র, চিবানো দাগ, মল।</li><li><b>ছত্রাক:</b> পাতায় গোল বা ধূসর দাগ, সাদা-কালো গুঁড়া, আর্দ্র আবহাওয়ায় বাড়ে।</li><li><b>ব্যাকটেরিয়া:</b> ভেজা পচা দাগ, গাছ হঠাৎ ঢলে পড়ে।</li><li><b>ভাইরাস:</b> পাতা কুঁকড়ায়, হলুদ ছোপ, গাছ খর্ব। বাহক সাধারণত সাদা মাছি বা জাব পোকা।</li></ul></div><div class="card"><h4>ওষুধের আগে এই কাজ</h4><ul><li>আক্রান্ত পাতা ও গাছ তুলে মাটিতে পুঁতে ফেলুন।</li><li>হলুদ আঠালো ফাঁদ ও ফেরোমন ফাঁদ বসান।</li><li>ফসল পর্যায়ক্রমে চাষ করুন, জমি পরিষ্কার রাখুন।</li><li>ছোট আক্রমণে নিমের তেল বা হাতে পোকা মারুন।</li><li>সমস্যা না থাকলে অকারণে বিষ দেবেন না। এতে খরচ বাড়ে, উপকারী পোকা মরে।</li></ul></div><div class="card"><h4>নিরাপদে স্প্রে</h4><ul>${SAFE.map(t=>`<li>${t}</li>`).join('')}</ul></div><div class="note">${DISC}</div>`)}
+
+/* ===================== ভাগ ১০: চাষের ক্যালেন্ডার ===================== */
+function calendar(){const m=new Date().getMonth()+1;sub('চাষের ক্যালেন্ডার',`<div class="why">💡 মাস বেছে নিন, ওই মাসে কোন ফসল লাগানো যায় ও কত দিনে ফসল ওঠে দেখুন।</div><div class="seg" id="mc">${MN.map((n,i)=>`<button data-m="${i+1}" onclick="calMonth(${i+1})">${n}</button>`).join('')}</div><div id="cl"></div>`);calMonth(m)}
+function calMonth(m){document.querySelectorAll('#mc button').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));let h='';
+  Object.keys(C).forEach(k=>C[k].ss.forEach(x=>{if(x[3].includes(m))h+=`<button class="row" onclick="calCrop('${k}')"><b class="i">${C[k].ic}</b><div>${k} · ${x[0]}<small>${x[1]}</small><small>ফসল তোলা: প্রায় ${bn(x[2],0)} দিন পরে</small></div>›</button>`}));
+  $('cl').innerHTML=h||'<div class="card sub">এই মাসে প্রধান ফসল বপন নেই। অন্য মাস দেখুন।</div>'}
+function calCrop(k){sub(k+': চাষের ক্যালেন্ডার',`<div class="why">💡 বপন বা রোপণের তারিখ দিন, ফসল কবে উঠবে দেখুন।</div><label class="f" for="cd">বপন/রোপণের তারিখ</label>${dinp('cd',`calUp('${k}')`)}<div id="cr"></div><div class="note">জাত ও আবহাওয়াভেদে ৫–১০ দিন কম-বেশি হতে পারে।</div>`);calUp(k)}
+function calUp(k){const b=$('cd').value||today();$('cr').innerHTML=C[k].ss.map(x=>`<div class="card"><span class="tag">${x[0]}</span><p style="margin-top:6px">${x[1]}</p><p style="margin-top:6px">ফসল তোলা শুরু: <b>${dd(x[2],b)}</b> <small style="color:var(--mute)">(প্রায় ${bn(x[2],0)} দিন পরে)</small></p></div>`).join('')}
+
+/* ===================== ভাগ ১১: সারের ক্যালকুলেটর ===================== */
+function fert(k){const ks=cropsFirst();k=k||ks[0];sub('সারের ক্যালকুলেটর',`<div class="why">💡 ফসল, জমির মাপ ও তারিখ দিন। পুরো মৌসুমে মোট কত সার আর কোন দিন কতটুকু দেবেন সব পাবেন।</div><label class="f" for="fc">ফসল</label><select id="fc">${opts(ks,k)}</select><label class="f" for="fa">জমির পরিমাণ</label>${ninp('fa','যেমন ১০')}<label class="f" for="fu">একক (ছাদে বা টবে হলে বর্গফুট)</label>${usel('fu')}<label class="f" for="fd">বপন/রোপণের তারিখ</label>${dinp('fd')}<button class="btn" style="margin-top:16px" onclick="fcalc()">সূচি তৈরি করুন</button><div id="fo"></div>`)}
+function fcalc(){const a=parseFloat($('fa').value);if(!(a>0)){$('fo').innerHTML=err('জমির পরিমাণ লিখুন।');return}
+  const k=$('fc').value,c=C[k],ha=a*UN[$('fu').value]/247.1,t=c.fz.map(v=>v*ha),b=$('fd').value||today();
+  let h=`<div class="res"><b>পুরো মৌসুমে মোট (${bn(a)} ${$('fu').value}, ${k})</b><div>ইউরিয়া: <b>${kg(t[0])}</b></div><div>টিএসপি: <b>${kg(t[1])}</b></div><div>এমওপি: <b>${kg(t[2])}</b></div><div>গোবর/কম্পোস্ট: <b>${kg(c.o*ha)}</b></div></div><h2>কখন কতটুকু দেবেন</h2>`;
+  c.fs.forEach(s=>{const p=[];if(s[0]===0)p.push('গোবর/কম্পোস্ট '+kg(c.o*ha));if(s[2])p.push('ইউরিয়া '+kg(t[0]*s[2]));if(s[3])p.push('টিএসপি '+kg(t[1]*s[3]));if(s[4])p.push('এমওপি '+kg(t[2]*s[4]));
+    h+=`<div class="tl"><b>${s[0]?bn(s[0],0)+' দিন পরে · ':'শুরুতে · '}${dd(s[0],b)}</b><small>${s[1]}</small><div>${p.join('<br>')||'—'}</div><small>${s[5]}</small></div>`});
+  $('fo').innerHTML=h+'<div class="note">সার গাছের গোড়া থেকে ৫ সেমি দূরে দিন, তারপর হালকা সেচ দিন। ভারী বৃষ্টির আগে সার দেবেন না। এগুলো আনুমানিক সাধারণ মাত্রা। মাটি পরীক্ষা ও স্থানীয় কৃষি অফিসের সুপারিশ অনুযায়ী বদলাতে পারে। বিঘা ধরা হয়েছে ৩৩ শতক।</div>'}
+
+/* ===================== ভাগ ১২: পরিচর্যা সূচি (সিরিয়াল বাই সিরিয়াল) ===================== */
+function care(k){const ks=cropsFirst();k=k||ks[0];sub('পরিচর্যা সূচি',`<div class="why">💡 সমস্যা না থাকলেও কখন কী করবেন: সার, সেচ, আগাছা, পর্যবেক্ষণ ও ফসল তোলা, দিন ধরে সাজানো।</div><label class="f" for="cc">ফসল</label><select id="cc" onchange="careS()">${opts(ks,k)}</select><label class="f" for="cs">মৌসুম</label><select id="cs"></select><label class="f" for="cdt">বপন/রোপণের তারিখ</label>${dinp('cdt')}<button class="btn" style="margin-top:16px" onclick="careGo()">কাজের তালিকা দেখুন</button><div id="co"></div>`);careS()}
+function careS(){$('cs').innerHTML=C[$('cc').value].ss.map((x,i)=>`<option value="${i}">${x[0]}</option>`).join('')}
+function careGo(){const k=$('cc').value,c=C[k],ss=c.ss[+$('cs').value],b=$('cdt').value||today(),t=[];
+  c.fs.forEach(s=>{const n=[];if(s[2])n.push('ইউরিয়া');if(s[3])n.push('টিএসপি');if(s[4])n.push('এমওপি');t.push([s[0],'🧪','সার: '+s[1],n.join(', ')+' (পরিমাণ জানতে সারের ক্যালকুলেটর দেখুন)'])});
+  c.care.forEach(x=>t.push([x[0],ICO[x[3]]||'🌱',x[1],x[2]]));t.push([ss[2],'🧺','ফসল তোলা শুরু',c.h]);t.sort((a,b2)=>a[0]-b2[0]);
+  $('co').innerHTML='<h2>'+k+' · '+ss[0]+'</h2>'+t.map(x=>`<div class="tl"><b>${x[1]} ${x[0]?bn(x[0],0)+' দিন পরে · ':'শুরুতে · '}${dd(x[0],b)}</b><small style="color:var(--ink)">${esc(x[2])}</small>${x[3]?`<small>${esc(x[3])}</small>`:''}</div>`).join('')+'<div class="note">🔍 চিহ্নের কাজ হলো পর্যবেক্ষণ। সমস্যা দেখলে তবেই ছবি তুলুন বা স্প্রে গাইড দেখুন। বিনা কারণে বিষ দেবেন না। 🧪 অণুখাদ্য (জিংক, বোরন) শুধু মাটি পরীক্ষায় ঘাটতি ধরা পড়লে দিন।</div>'}
+
+/* ===================== ভাগ ১৩: ওষুধের মাত্রা ও কৃষি ক্যালকুলেটর ===================== */
+function dose(k,i,m){const ks=cropsFirst();k=k||ks[0];sub('ওষুধের মাত্রা',`<label class="f" for="dk">ফসল</label><select id="dk" onchange="dK()">${opts(ks,k)}</select><label class="f" for="dp">সমস্যা</label><select id="dp" onchange="dP()"></select><label class="f" for="dm">ওষুধ (সক্রিয় উপাদান)</label><select id="dm"></select><label class="f" for="dt">স্প্রে ট্যাংকের আকার (লিটার)</label>${ninp('dt','',16)}<label class="f" for="da">জমির পরিমাণ</label>${ninp('da','যেমন ১০')}<label class="f" for="du">একক</label>${usel('du')}<label class="f" for="dw">প্রতি শতকে পানি (লিটার; ছোট গাছে ২, বড় গাছে ৩–৪)</label>${ninp('dw','',2)}<button class="btn" style="margin-top:16px" onclick="dcalc()">হিসাব করুন</button><div id="do"></div>`);dK(i,m)}
+function dK(i,m){const k=$('dk').value;$('dp').innerHTML=C[k].d.map((x,n)=>`<option value="${n}"${n===(i||0)?' selected':''}>${esc(x.n)}</option>`).join('');dP(m)}
+function dP(m){const d=C[$('dk').value].d[+$('dp').value];$('dm').innerHTML=d.m.length?d.m.map((x,n)=>`<option value="${n}"${n===(m||0)?' selected':''}>${esc(x)}</option>`).join(''):'<option value="">ওষুধ লাগে না</option>'}
+function dcalc(){const d=C[$('dk').value].d[+$('dp').value],nm=d.m[+$('dm').value||0],p=SP[nm],t=parseFloat($('dt').value),a=parseFloat($('da').value),w=parseFloat($('dw').value);
+  if(!p||!(t>0&&a>0&&w>0)){$('do').innerHTML=err('ট্যাংকের আকার, জমির পরিমাণ ও পানির পরিমাণ লিখুন।');return}
+  const wt=a*UN[$('du').value]*w,tk=Math.ceil(wt/t);
+  $('do').innerHTML=`<div class="res"><b>${esc(nm)}</b><div>মাত্রা: প্রতি লিটারে <b>${bn(p[0])} ${p[1]}</b></div><div>প্রতি ট্যাংকে (${bn(t,0)} লি): <b>${bn(t*p[0])} ${p[1]}</b></div><div>মোট পানি: <b>${bn(wt)} লিটার</b> (প্রায় <b>${bn(tk,0)}</b> ট্যাংক)</div><div>মোট ওষুধ: <b>${bn(wt*p[0])} ${p[1]}</b></div><div>পরের স্প্রে: <b>${dd(p[2])}</b> (প্রতি ${bn(p[2],0)} দিন পর, সর্বোচ্চ ${bn(p[3],0)} বার)</div></div><div class="note">আগে অর্ধেক পানিতে ওষুধ গুলুন, তারপর বাকি পানি মিশিয়ে নাড়ুন। ${DISC}</div>`}
+function farm(){sub('কৃষি ক্যালকুলেটর',`<div class="card"><h4>📐 জমির মাপ রূপান্তর</h4>${ninp('fv','যেমন ১')}<div style="height:8px"></div>${usel('fx')}<div id="fr"></div></div><div class="card"><h4>💰 লাভ-লোকসান হিসাব</h4><label class="f" for="pc">মোট খরচ, টাকা (বীজ, সার, ওষুধ, শ্রম, সেচ)</label>${ninp('pc')}<label class="f" for="py">মোট ফলন (কেজি)</label>${ninp('py')}<label class="f" for="pp">বিক্রয়মূল্য (টাকা প্রতি কেজি)</label>${ninp('pp')}<button class="btn" style="margin-top:14px" onclick="pcalc()">হিসাব করুন</button><div id="po"></div></div>`);$('fv').oninput=conv;$('fx').onchange=conv}
+function conv(){const v=parseFloat($('fv').value);if(!(v>0)){$('fr').innerHTML='';return}const sh=v*UN[$('fx').value];$('fr').innerHTML='<table class="tb">'+Object.keys(UN).map(u=>`<tr><td>${u}</td><td>${bn(sh/UN[u],3)}</td></tr>`).join('')+'</table>'}
+function pcalc(){const c=parseFloat($('pc').value),y=parseFloat($('py').value),p=parseFloat($('pp').value);if(!(c>=0&&y>0&&p>0)){$('po').innerHTML=err('খরচ, ফলন ও দাম লিখুন।');return}const r=y*p,l=r-c;
+  $('po').innerHTML=`<div class="res"><div>মোট আয়: <b>৳${bn(r,0)}</b></div><div>${l>=0?'লাভ':'লোকসান'}: <b style="color:${l>=0?'var(--g)':'var(--red)'}">৳${bn(Math.abs(l),0)}</b></div><div>প্রতি কেজি উৎপাদন খরচ: <b>৳${bn(c/y)}</b></div><div>লোকসান এড়াতে ন্যূনতম দাম: <b>৳${bn(c/y)}/কেজি</b></div></div>`}
+
+/* ===================== ভাগ ১৪: ছবি তুলে শনাক্ত (ক্যামেরা + AI) ===================== */
+let SCROP='';
+function openScan(k){SCROP=k||'';sub('ছবি তুলুন',`<div class="why">💡 আক্রান্ত পাতা বা ফলের কাছ থেকে, দিনের আলোয় স্পষ্ট ছবি তুলুন। এক ছবিতে একটি অংশ রাখুন।</div>${k?`<div class="card"><span class="tag">${C[k].ic} ${k}</span> ফসলের ছবি</div>`:''}
+<label class="btn" style="margin-top:14px">📷 ক্যামেরায় ছবি তুলুন<input class="vh" type="file" accept="image/*" capture="environment" onchange="scan(this.files[0])"></label>
+<label class="btn o" style="margin-top:10px">🖼️ গ্যালারি থেকে বেছে নিন<input class="vh" type="file" accept="image/*" onchange="scan(this.files[0])"></label>
+<div class="note">ক্যামেরা না খুললে ব্রাউজারে ক্যামেরার অনুমতি দিন, অথবা গ্যালারি থেকে ছবি দিন।</div>`)}
+function shrink(f){return new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const r=Math.min(1,768/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*r;c.height=im.height*r;c.getContext('2d').drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',.82);URL.revokeObjectURL(u);ok([url.split(',')[1],url])};im.onerror=no;im.src=u})}
+const soft=r=>`<div class="note" style="background:var(--mint);color:var(--gd)">এই মুহূর্তে ছবি বিশ্লেষণ একটু ব্যস্ত। কিছুক্ষণ পর আবার চেষ্টা করুন। অপেক্ষা না করে চাইলে লক্ষণ দেখে সমস্যা খুঁজে নিতে পারেন।</div><button class="btn" style="margin-top:14px" onclick="${r}">আবার চেষ্টা করুন</button><button class="btn o" style="margin-top:10px" onclick="back();spray()">🧴 লক্ষণ দেখে সমস্যা খুঁজুন</button>`;
+const dbg=e=>DEBUG?`<div class="note">ডিবাগ: ${esc(e.message)}</div>`:'';
+const ext=t=>JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1));
+async function api(body){const r=await fetch(CONFIG.AI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({crops:S.crops.join(', '),place:S.dist},body))});let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j.text}
+async function scan(f){if(!f)return;sub('শনাক্ত হচ্ছে…','<div class="spin"></div><p class="sub" style="text-align:center">ছবি বিশ্লেষণ করা হচ্ছে, কয়েক সেকেন্ড অপেক্ষা করুন।</p>');
+  try{const p=await shrink(f),j=ext(await api({mode:'diagnose',image:p[0],crop:SCROP})),img=`<img class="prev" alt="আপনার তোলা ছবি" src="${p[1]}">`;H.pop();
+    if(!j.photo_ok){sub('ছবি পরিষ্কার নয়',img+`<div class="note">ছবিটি স্পষ্ট নয় বা ফসলের অংশ দেখা যাচ্ছে না। কাছ থেকে, আলোয় আরেকটি ছবি তুলুন।</div><button class="btn" style="margin-top:14px" onclick="back();openScan(SCROP)">আবার চেষ্টা করুন</button>`);return}
+    const L=a=>(a||[]).map(t=>`<li>${esc(t)}</li>`).join(''),conf=Math.min(100,Math.max(0,+j.confidence||0));let lib='';
+    Object.keys(C).forEach(k=>C[k].d.forEach((x,i)=>{if(!lib&&j.problem&&(j.problem.includes(x.n)||x.n.includes(j.problem)))lib=`<button class="btn o" style="margin-top:12px" onclick="dis('${k}',${i})">📚 লাইব্রেরিতে বিস্তারিত দেখুন</button>`}));
+    sub(j.healthy?'গাছ সুস্থ দেখাচ্ছে':j.problem,img+`<div class="card"><span class="tag${j.healthy?'':' r'}">${esc(j.crop)}</span><h4 style="margin-top:8px">${esc(j.problem)}</h4><small style="color:var(--mute)">নিশ্চিততা ${bn(conf,0)}%</small><div class="meter"><i style="width:${conf}%"></i></div>${j.cause?`<p style="margin-top:10px">${esc(j.cause)}</p>`:''}</div>`
+     +(j.symptoms&&j.symptoms.length?`<div class="card"><h4>লক্ষণ</h4><ul>${L(j.symptoms)}</ul></div>`:'')+`<div class="card"><h4>কীভাবে মুক্তি পাবেন</h4><ul>${L(j.steps)}</ul></div>`
+     +(j.medicines&&j.medicines.length?`<div class="card"><h4>ওষুধের পরামর্শ</h4>${j.medicines.map(m=>{const sk=Object.keys(SP).find(n=>m.name&&m.name.includes(n.split(' ')[0])),p=sk&&SP[sk];return `<div class="mc"><b>${esc(m.name)}</b><small>${esc(m.type)} · কার্যকারিতা: ${esc(m.effect)}</small><div style="font-size:14px;margin-top:4px">${esc(m.how)}</div>${p?`<div style="font-size:13px;color:var(--mute);margin-top:4px">প্রচলিত মাত্রা: প্রতি লিটারে ${bn(p[0])} ${p[1]}, প্রতি ${bn(p[2],0)} দিন পর পর</div>`:''}</div>`}).join('')}</div>`:'')
+     +(j.prevention&&j.prevention.length?`<div class="card"><h4>ভবিষ্যতে প্রতিরোধ</h4><ul>${L(j.prevention)}</ul></div>`:'')+lib+`<div class="note">${DISC} AI-র ফলাফল ১০০% নিশ্চিত নয়।</div><button class="btn" style="margin-top:14px" onclick="back();openScan(SCROP)">আরেকটি ছবি দিন</button>`)
+  }catch(e){H.pop();sub('একটু অপেক্ষা করুন',soft('back();openScan(SCROP)')+dbg(e))}}
+async function ask(){const q=$('q').value.trim();if(!q){$('qa').innerHTML=err('আগে প্রশ্ন লিখুন।');return}$('qb').disabled=true;$('qa').innerHTML='<div class="spin"></div>';
+  try{const t=await api({mode:'ask',q});$('qa').innerHTML=`<div class="card out">${esc(t)}</div><div class="note">${DISC}</div>`}catch(e){$('qa').innerHTML='<div class="note" style="background:var(--mint);color:var(--gd)">এই মুহূর্তে উত্তর দিতে একটু দেরি হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।</div>'+dbg(e)}$('qb').disabled=false}
+
+/* ===================== ভাগ ১৪ক: অবস্থান (নিজে থেকে) ও বাংলা তারিখ ===================== */
+/* জেলা সদরের মোটামুটি অক্ষাংশ-দ্রাঘিমাংশ। GPS পেলে সবচেয়ে কাছের জেলা বেছে নেওয়া হয়। */
+const DC={"ঢাকা":[23.81,90.41],"গাজীপুর":[23.99,90.42],"নারায়ণগঞ্জ":[23.62,90.50],"নরসিংদী":[23.92,90.72],"মানিকগঞ্জ":[23.86,90.00],"মুন্সিগঞ্জ":[23.55,90.53],"টাঙ্গাইল":[24.25,89.92],"কিশোরগঞ্জ":[24.43,90.78],"ফরিদপুর":[23.60,89.84],"গোপালগঞ্জ":[23.01,89.83],"মাদারীপুর":[23.17,90.20],"রাজবাড়ী":[23.76,89.64],"শরীয়তপুর":[23.22,90.35],
+"চট্টগ্রাম":[22.36,91.78],"কক্সবাজার":[21.43,92.01],"কুমিল্লা":[23.46,91.18],"ব্রাহ্মণবাড়িয়া":[23.96,91.11],"চাঁদপুর":[23.23,90.67],"ফেনী":[23.02,91.40],"নোয়াখালী":[22.87,91.10],"লক্ষ্মীপুর":[22.94,90.84],"খাগড়াছড়ি":[23.12,91.98],"রাঙামাটি":[22.65,92.17],"বান্দরবান":[22.20,92.22],
+"রাজশাহী":[24.37,88.60],"বগুড়া":[24.85,89.37],"জয়পুরহাট":[25.10,89.02],"নওগাঁ":[24.80,88.93],"নাটোর":[24.41,88.99],"চাঁপাইনবাবগঞ্জ":[24.60,88.28],"পাবনা":[24.00,89.23],"সিরাজগঞ্জ":[24.45,89.70],
+"খুলনা":[22.82,89.55],"বাগেরহাট":[22.65,89.79],"চুয়াডাঙ্গা":[23.64,88.85],"যশোর":[23.17,89.21],"ঝিনাইদহ":[23.54,89.17],"কুষ্টিয়া":[23.90,89.12],"মাগুরা":[23.49,89.42],"মেহেরপুর":[23.76,88.63],"নড়াইল":[23.17,89.50],"সাতক্ষীরা":[22.72,89.07],
+"বরিশাল":[22.70,90.37],"বরগুনা":[22.15,90.13],"ভোলা":[22.69,90.65],"ঝালকাঠি":[22.64,90.20],"পটুয়াখালী":[22.36,90.33],"পিরোজপুর":[22.58,89.97],
+"সিলেট":[24.90,91.87],"হবিগঞ্জ":[24.38,91.42],"মৌলভীবাজার":[24.48,91.77],"সুনামগঞ্জ":[25.07,91.40],
+"রংপুর":[25.75,89.25],"দিনাজপুর":[25.63,88.64],"গাইবান্ধা":[25.33,89.53],"কুড়িগ্রাম":[25.81,89.64],"লালমনিরহাট":[25.92,89.45],"নীলফামারী":[25.93,88.86],"পঞ্চগড়":[26.34,88.55],"ঠাকুরগাঁও":[26.03,88.46],
+"ময়মনসিংহ":[24.75,90.41],"জামালপুর":[24.92,89.94],"নেত্রকোণা":[24.88,90.73],"শেরপুর":[25.02,90.02]};
+const divOf=d=>Object.keys(GEO).find(v=>GEO[v].includes(d))||'';
+function nearest(lat,lon){let best='',bk=1e9;for(const k in DC){const dx=DC[k][0]-lat,dy=(DC[k][1]-lon)*Math.cos(lat*Math.PI/180),km=Math.sqrt(dx*dx+dy*dy)*111;if(km<bk){bk=km;best=k}}return[best,bk]}
+function geo(ok,fail){if(!navigator.geolocation)return fail(0);navigator.geolocation.getCurrentPosition(p=>ok(p.coords.latitude,p.coords.longitude),e=>fail(e.code),{timeout:10000,maximumAge:600000})}
+async function place(lat,lon){const[d,km]=nearest(lat,lon);
+  if(km<70&&lat>20.5&&lat<26.7&&lon>88&&lon<92.8)return{bd:true,dist:d,div:divOf(d)};
+  try{const c=new AbortController();setTimeout(()=>c.abort(),4000);
+    const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=bn`,{signal:c.signal}),j=await r.json();
+    return{bd:false,dist:j.city||j.locality||j.principalSubdivision||j.countryName||'আপনার এলাকা',div:j.countryName||''}}
+  catch(e){return{bd:false,dist:'আপনার এলাকা',div:''}}}
+/* ধাপ ২-এ: অবস্থান নিয়ে বিভাগ-জেলা নিজে বসানো */
+function autoLoc(){const st=$('locst');st.textContent='আপনার অবস্থান খোঁজা হচ্ছে…';
+  geo(async(lat,lon)=>{const r=await place(lat,lon);S.lat=lat;S.lon=lon;
+    if(r.bd){S.outside=false;$('dv').value=r.div;fillD();$('ds').value=r.dist;st.textContent='📍 '+r.dist+', '+r.div+' (আপনার অবস্থান থেকে)'}
+    else{S.outside=true;S.div=r.div;S.dist=r.dist;st.textContent='📍 '+r.dist+(r.div?', '+r.div:'')+' (আপনার অবস্থান থেকে)'}
+    chk()},
+  c=>{st.textContent=c===1?'অবস্থানের অনুমতি দেওয়া হয়নি। নিচে হাতে বেছে নিন।':'অবস্থান পাওয়া যায়নি। নিচে হাতে বেছে নিন।'})}
+/* হোমে অবস্থান-ট্যাগে ট্যাপ করলে আপডেট; আগে অনুমতি দেওয়া থাকলে অ্যাপ খুললেই নিজে আপডেট */
+function reLoc(quiet){const t=$('loc');if(!quiet)t.textContent='📍 খোঁজা হচ্ছে…';
+  geo(async(lat,lon)=>{const r=await place(lat,lon);S.lat=lat;S.lon=lon;S.outside=!r.bd;S.dist=r.dist;S.div=r.div;save();home()},()=>{home()})}
+/* বাংলা তারিখ (বাংলাদেশের সংশোধিত পঞ্জিকা: মাসের শুরু ইংরেজি তারিখে স্থির) */
+const BM=[["বৈশাখ",4,14],["জ্যৈষ্ঠ",5,15],["আষাঢ়",6,15],["শ্রাবণ",7,16],["ভাদ্র",8,16],["আশ্বিন",9,16],["কার্তিক",10,16],["অগ্রহায়ণ",11,15],["পৌষ",12,15],["মাঘ",1,14],["ফাল্গুন",2,13],["চৈত্র",3,14]];
+const RTU=['গ্রীষ্ম','বর্ষা','শরৎ','হেমন্ত','শীত','বসন্ত'];
+const bnum=n=>Number(n).toLocaleString('bn-BD',{useGrouping:false});
+function bdate(dt){const y=dt.getFullYear(),t=new Date(y,dt.getMonth(),dt.getDate()).getTime();let best=null;
+  for(const yy of[y-1,y])BM.forEach((m,i)=>{const s=new Date(yy,m[1]-1,m[2]).getTime();if(s<=t&&(!best||s>best.s))best={s,n:m[0],i}});
+  const after=dt.getMonth()>3||(dt.getMonth()===3&&dt.getDate()>=14);
+  return{d:Math.round((t-best.s)/864e5)+1,m:best.n,y:after?y-593:y-594,r:RTU[Math.floor(best.i/2)]}}
+
+/* ===================== ভাগ ১৫: শুরু ===================== */
+(function init(){$('dv').innerHTML='<option value="">বিভাগ বেছে নিন</option>'+Object.keys(GEO).map(d=>`<option>${d}</option>`).join('');$('dv').onchange=()=>{S.outside=false;fillD();chk()};$('ds').onchange=()=>{S.outside=false;chk()};fillD();obC();obS();
+  try{const v=JSON.parse(localStorage.getItem('ksv4'));if(v&&v.crops&&v.crops.length&&v.site!==null){S=v;home();tab('s-home');try{navigator.permissions.query({name:'geolocation'}).then(p=>{if(p.state==='granted')reLoc(true)})}catch(e){}}}catch(e){}})();
+</script>
+</body>
+</html>
