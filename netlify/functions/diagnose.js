@@ -1,10 +1,9 @@
 /* ===== কৃষি সাথী: AI ফাংশন (ছবি শনাক্ত + প্রশ্ন-উত্তর) =====
    API key কোডে নয়। Netlify > Environment variables-এ GEMINI_API_KEY নামে আছে।
-   প্রথম মডেল ব্যস্ত থাকলে নিজে থেকে দ্বিতীয় মডেলে চেষ্টা করে। */
-const MODELS = [
-  process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
-  'gemini-3.1-flash-lite',
-].filter((m, i, a) => a.indexOf(m) === i);
+   দুটি মডেলকে একসঙ্গে ডাকা হয়। যেটা আগে উত্তর দেয় সেটাই নেওয়া হয়,
+   তাই একটি ব্যস্ত থাকলেও অ্যাপ চলে। */
+const MODELS = [process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite']
+  .filter((m, i, a) => a.indexOf(m) === i);
 
 const DIAG_PROMPT = `তুমি বাংলাদেশের অভিজ্ঞ কৃষি রোগতত্ত্ববিদ ও কীটতত্ত্ববিদ। ছবির ফসল, রোগ বা পোকা শনাক্ত করো।
 শুধু একটি JSON অবজেক্ট দাও, অন্য কিছু নয়। সহজ বাংলায়, খুব সংক্ষেপে লেখো। প্রতিটি তালিকায় সর্বোচ্চ ৩টি ছোট বাক্য:
@@ -33,7 +32,10 @@ async function callGemini(model, key, parts, cfg, ms) {
       signal: ctl.signal,
     });
     const j = await r.json();
-    return { ok: r.ok, j };
+    if (!r.ok) throw new Error((j.error && j.error.message) || 'AI সেবা সাড়া দেয়নি');
+    const text = ((j.candidates || [])[0]?.content?.parts || []).map((p) => p.text || '').join('');
+    if (!text) throw new Error('AI খালি উত্তর দিয়েছে');
+    return text;
   } finally {
     clearTimeout(timer);
   }
@@ -61,20 +63,11 @@ exports.handler = async (event) => {
     cfg.responseMimeType = 'application/json';
   }
 
-  let last = 'AI সেবা সাড়া দেয়নি';
-  for (let i = 0; i < MODELS.length; i++) {
-    try {
-      const { ok, j } = await callGemini(MODELS[i], key, parts, cfg, i === 0 ? 5500 : 4000);
-      if (ok) {
-        const text = ((j.candidates || [])[0]?.content?.parts || []).map((p) => p.text || '').join('');
-        if (text) return reply(200, { text });
-        last = 'AI খালি উত্তর দিয়েছে';
-      } else {
-        last = (j.error && j.error.message) || last;
-      }
-    } catch (e) {
-      last = e.name === 'AbortError' ? 'AI উত্তর দিতে দেরি করছে' : 'AI সংযোগ ব্যর্থ';
-    }
+  try {
+    const text = await Promise.any(MODELS.map((m) => callGemini(m, key, parts, cfg, 8000)));
+    return reply(200, { text });
+  } catch (e) {
+    const msg = e.errors ? e.errors.map((x) => x.message).join(' | ') : String(e);
+    return reply(502, { error: msg });
   }
-  return reply(502, { error: last });
 };
