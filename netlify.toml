@@ -3,3 +3,9 @@
 
 [functions]
   directory = "netlify/functions"
+
+[[redirects]]
+  from = "/"
+  to = "/app-v2.html"
+  status = 200
+  force = true
